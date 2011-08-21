@@ -5,11 +5,15 @@ import plistlib
 import sqlite3
 import time
 
+from optparse import OptionParser
 from subprocess import call
 from tempfile import NamedTemporaryFile
 
 # DBFILE = $HOME/.batterylogx.sqlite
 DBFILE = os.path.join(os.environ['HOME'], '.batterylogx.sqlite')
+# Initialize database
+conn = sqlite3.connect(DBFILE, isolation_level=None)
+c = conn.cursor()
 
 def getdata():
     with NamedTemporaryFile() as f:
@@ -25,14 +29,11 @@ def getdata():
         is_charging = chargeinfo['sppower_battery_is_charging']
         capacity = chargeinfo['sppower_battery_current_capacity']
         bserial = batterymodel['sppower_battery_serial_number']
-    return {'voltage' : voltage, 'amperage': amperage, 'maxcap' : maxcap,
-        'is_charging' : is_charging, 'capacity' : capacity,
-        'bserial' : bserial}
+    return dict(voltage=voltage, amperage=amperage, maxcap=maxcap,
+        is_charging=is_charging, capacity=capacity, bserial=bserial)
 
-def main():
-    # Initialize database
-    conn = sqlite3.connect(DBFILE, isolation_level=None)
-    c = conn.cursor()
+def create_table():
+    '''Create the logging table if it does not exist'''
     try:
         c.execute('''CREATE TABLE batterylog (
             id SERIAL,
@@ -44,12 +45,35 @@ def main():
     except sqlite3.OperationalError:
         pass # table already created
 
+def log_data(verbose=False):
+    d = getdata()
+    c.execute("""INSERT INTO batterylog
+        (bserial, voltage, amperage, capacity) VALUES (?, ?, ?, ?)""",
+        [d['bserial'], d['voltage'], d['amperage'], d['capacity']])
+    if verbose:
+        print("Voltage: %d mV  Amperage %d mA  Capacity %d mAh" % (
+            d['voltage'], d['amperage'], d['capacity']))
+
+def main():
+    parser = OptionParser()
+    parser.add_option("-k", "--kill", dest="kill", action="store_true",
+                      default=False, help="Kill a running logger")
+    parser.add_option("-d", "--daemon", dest="daemon", action="store_true",
+                      default=False, help="Run logger in background")
+
+    (options, args) = parser.parse_args()
+    if options.daemon:
+        verbose = False
+    else:
+        verbose = True
+        print("Logging to stdout and %s\n" % DBFILE)
+
+    # Create the logging table if it doesn't exist
+    create_table()
+
     # Main loop
     while True:
-        d = getdata()
-        c.execute("""INSERT INTO batterylog
-            (bserial, voltage, amperage, capacity) VALUES (?, ?, ?, ?)""",
-            [d['bserial'], d['voltage'], d['amperage'], d['capacity']])
+        log_data(verbose)
         time.sleep(30)
 
 if __name__ == '__main__':
