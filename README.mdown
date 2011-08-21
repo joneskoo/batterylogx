@@ -7,6 +7,30 @@ an easy-to-use (and maintain) toolkit for analyzing battery performance.
 Currently implemented is battery data logger only. The data is stored in a
 sqlite3 database. The data logger supports daemonizing (run in background).
 
+# Recorded information #
+
+The following information is stored:
+
+* timestamp
+* battery serial number
+* voltage
+* amperage
+* capacity
+
+Much more information would be available but I did not see the usefulness of
+other fields yet.
+
+# Data analysis #
+
+Some ideas for data analysis (later) are listed here:
+
+* Sleep detection (no data)
+* How long was the system in sleep?
+* How much capacity was drained in sleep?
+* Charge/discharge cycle detection (based on amperage)
+* What was the average power during a discharge cycle
+* Full charge time?
+
 
 # System requirements #
 
