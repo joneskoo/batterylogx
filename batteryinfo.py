@@ -24,14 +24,13 @@ def getdata():
         d = p[0]['_items'][0]
         chargeinfo = d['sppower_battery_charge_info']
         batterymodel = d['sppower_battery_model_info']
-        voltage = d['sppower_current_voltage']
-        amperage = d['sppower_current_amperage']
-        maxcap = chargeinfo['sppower_battery_max_capacity']
-        is_charging = chargeinfo['sppower_battery_is_charging']
-        capacity = chargeinfo['sppower_battery_current_capacity']
-        bserial = batterymodel['sppower_battery_serial_number']
-    return dict(voltage=voltage, amperage=amperage, maxcap=maxcap,
-        is_charging=is_charging, capacity=capacity, bserial=bserial)
+        return dict(
+            voltage=d['sppower_current_voltage'],
+            amperage=d['sppower_current_amperage'],
+            maxcap=chargeinfo['sppower_battery_max_capacity'],
+            is_charging=chargeinfo['sppower_battery_is_charging'],
+            capacity=chargeinfo['sppower_battery_current_capacity'],
+            bserial=batterymodel['sppower_battery_serial_number'])
 
 def create_table():
     '''Create the logging table if it does not exist'''
