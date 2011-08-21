@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+# Copyright (C) 2011 by Joonas Kuorilehto
+# License: MIT License
 
 import os
 import plistlib

@@ -1,0 +1,23 @@
+# Introduction #
+
+BatterylogX is a set of tools for logging and later analyzing laptop battery
+power data such as voltage and charge/discharge current. The goal is to have
+an easy-to-use (and maintain) toolkit for analyzing battery performance.
+
+Currently implemented is battery data logger only. The data is stored in a
+sqlite3 database. The data logger supports daemonizing (run in background).
+
+
+# System requirements #
+
+These programs are written for Python 3.2, but should also work with version
+2.7. The battery information is read using system\_profiler, an Apple
+proprietary utility. It should be trivial to port this to other platforms,
+but since I don't have non-Apple laptops, I'm not going to implement it.
+I am willing to integrate changes made by others as long as they do not break
+functionality for me.
+
+# License #
+
+All this code is open source under the MIT license. The full text is
+duplicated in the file LICENSE.
