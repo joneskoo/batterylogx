@@ -20,7 +20,7 @@ c = conn.cursor()
 
 def getdata():
     with NamedTemporaryFile() as f:
-        call(['system_profiler', '-xml', 'SPPowerDataType'], stdout=f)
+        call(['/usr/sbin/system_profiler', '-xml', 'SPPowerDataType'], stdout=f)
         f.seek(0)
         p = plistlib.readPlist(f)
         d = p[0]['_items'][0]
